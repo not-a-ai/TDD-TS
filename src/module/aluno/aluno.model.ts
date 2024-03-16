@@ -17,4 +17,21 @@ export class Aluno {
     }
     return this.db('aluno').insert(params)
   }
+
+  update = async (params: any) => {
+    if (typeof params.cpf !== 'number') {
+      throw new Error('O cpf deve conter números')
+    }
+    if (!params.nome || typeof params.nome !== 'string' || params.nome.trim().length === 0) {
+      throw new Error('É obrigatório ter um nome')
+    }
+    return this.db('aluno').update(params)
+  }
+
+  delete = async (params: any) => {
+    if (!params.cpf) {
+      throw new Error('Esse aluno não existe')
+    }
+    return this.db('aluno').delete(params)
+  }
 }

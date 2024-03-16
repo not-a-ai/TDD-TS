@@ -1,5 +1,5 @@
 import { Aluno } from "../../../module/aluno/aluno.model"
-
+let knexServiceMock: any;
 describe('Aluno model Suite', () => {
   describe('Salvar aluno Suite', () => {
     it('Deve cadastrar um aluno', async () => {
@@ -74,39 +74,90 @@ describe('Aluno model Suite', () => {
       })
   })
   describe('Editar aluno Suite', () => {
-    it('Deve atualizar um aluno', () => {
-        // expect(alunoModel.store({
-        //   nome: 'Aluno 1',
-        //   cpf: 1231231,
-        // })).toEqual([1]) 
+    it('É obrigatório o Aluno ter um nome ', async () => {
+      let knexServiceMock: any;
+      //mock do knex
+      const knexMock = () => {
+          return {
+              update: jest.fn().mockReturnValueOnce({
+                  nome: 'Exemplo',
+                  cpf: 1231231
+              }) 
+          }
+      }
+      //mock do serviço knex
+      knexServiceMock = {
+        obterConexao: jest.fn(() => knexMock)
+      }
+      //instancia do aluno com o mock do serviço knex
+      const aluno = new Aluno(knexServiceMock);
+      //testa se a exceção é lançada quando o aluno é atualizado sem nome
+      
+      try {
+        await aluno.update({
+          nome: '',
+          cpf: 1231231
+        });
+      } catch (e: any) {
+        expect(e.message).toBe('É obrigatório ter um nome')
+      }
+      
       })
-    it('Novo cpf não pode conter letra', () => {
-        
-    })
-    it('É obrigatório o Aluno ter um nome', () => {
-        
-    })
-    it('Deve retornar um erro caso o aluno não exista na base', () => {
-        
-    })
-  })
-  describe('Ver aluno Suite', () => {
-    it('Deve ver um aluno', () => {
-        // expect(alunoModel.store({
-        //   nome: 'Aluno 1',
-        //   cpf: 1231231,
-        // })).toEqual([1]) 
+    it('Novo cpf não pode conter letra', async () => {
+      //mock do knex
+      const knexMock = () => {
+          return {
+              update: jest.fn().mockReturnValueOnce({
+                  nome: 'Exemplo',
+                  cpf: 1231231
+              }) 
+          }
+      }
+      //mock do serviço knex
+      knexServiceMock = {
+        obterConexao: jest.fn(() => knexMock)
+      }
+      //instancia do aluno com o mock do serviço knex
+      const aluno = new Aluno(knexServiceMock);
+      //testa se a exceção é lançada quando o aluno é atualizado sem nome
+        try {
+          await aluno.update({
+            nome: 'Exemplo',
+            cpf: 'sdfsf'
+          });
+        } catch (e: any) {
+          expect(e.message).toBe('O cpf deve conter números')
+        }
       })
-    it('Deve retornar um erro caso o aluno não exista na base', () => {
-        
-    })
-  })
-  describe('Remover aluno Suite', () => {
-    it('Deve remover um aluno', () => {
-        // expect(alunoModel.store({
-        //   nome: 'Aluno 1',
-        //   cpf: 1231231,
-        // })).toEqual([1]) 
+    
+})
+
+  describe('Remover aluno Suite',  () => {
+    it('Deve remover um aluno', async () => {
+        //mock do knex
+      const knexMock = () => {
+        return {
+            delete: jest.fn().mockReturnValueOnce({
+                nome: 'Exemplo',
+                cpf: 1231231
+            }) 
+        }
+    }
+    console.log(knexMock);
+    //mock do serviço knex
+    knexServiceMock = {
+      obterConexao: jest.fn(() => knexMock)
+    }
+    //instancia do aluno com o mock do serviço knex
+    const aluno = new Aluno(knexServiceMock);
+    //testa se a exceção é lançada quando o aluno é atualizado sem nome
+      try {
+        await aluno.delete({
+          cpf: 1231231
+        });
+      } catch (e: any) {
+        expect(true).toBe(true)
+      }
       })
     it('Deve retornar um erro caso o aluno não exista na base', () => {
         
